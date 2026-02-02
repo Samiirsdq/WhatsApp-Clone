@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Web Clone</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- CSS STYLES --- */
+        
+        /* Reset & Basics */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #d1d7db;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Teal Background Strip */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 127px;
+            background-color: #00a884;
+            z-index: -1;
+        }
+
+        /* Main App Container */
+        .app-container {
+            width: 1400px;
+            height: 95vh;
+            background-color: #fff;
+            display: flex;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 30%;
+            max-width: 450px;
+            border-right: 1px solid #d1d7db;
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+        }
+
+        .header {
+            height: 60px;
+            background-color: #f0f2f5;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            border-bottom: 1px solid #d1d7db;
+        }
+
+        .user-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 20px;
+            color: #54656f;
+        }
+
+        .nav-icons i {
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* Search Bar */
+        .search-container {
+            background-color: #fff;
+            padding: 7px 10px;
+            border-bottom: 1px solid #d1d7db;
+        }
+
+        .search-box {
+            background-color: #f0f2f5;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            height: 35px;
+        }
+
+        .search-box i {
+            color: #54656f;
+            margin-right: 15px;
+            font-size: 14px;
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            background: transparent;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        /* Contacts */
+        .contact-list {
+            flex: 1;
+            overflow-y: auto;
+            background-color: #fff;
+        }
+
+        .contact {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f2f5;
+            transition: background 0.2s;
+        }
+
+        .contact:hover {
+            background-color: #f0f2f5;
+        }
+
+        .contact.active {
+            background-color: #f0f2f5;
+        }
+
+        .contact-info {
+            margin-left: 15px;
+            flex: 1;
+        }
+
+        .contact-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+        }
+
+        .contact-name {
+            font-size: 17px;
+            color: #111b21;
+        }
+
+        .contact-time {
+            font-size: 12px;
+            color: #667781;
+        }
+
+        .contact-msg {
+            font-size: 14px;
+            color: #667781;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+
+        /* --- CHAT AREA --- */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #efeae2;
+            position: relative;
+        }
+
+        .chat-area::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .chat-header-info {
+            display: flex;
+            flex-direction: column;
+            margin-left: 15px;
+        }
+
+        .chat-header-name {
+            font-size: 16px;
+            color: #111b21;
+        }
+
+        .chat-header-status {
+            font-size: 13px;
+            color: #667781;
+            margin-top: 2px;
+        }
+
+        /* Messages */
+        .messages-container {
+            flex: 1;
+            padding: 20px 60px;
+            overflow-y: auto;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            max-width: 65%;
+            padding: 8px 12px;
+            font-size: 14.2px;
+            line-height: 19px;
+            border-radius: 8px;
+            position: relative;
+            box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
+        }
+
+        .message.received {
+            align-self: flex-start;
+            background-color: #fff;
+            border-top-left-radius: 0;
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            background-color: #d9fdd3;
+            border-top-right-radius: 0;
+        }
+
+        .msg-time {
+            float: right;
+            margin-left: 8px;
+            margin-top: 4px;
+            font-size: 11px;
+            color: #667781;
+            display: flex;
+            align-items: center;
+        }
+
+        .msg-time i {
+            margin-left: 3px;
+            color: #53bdeb;
+        }
+
+        /* Footer */
+        .chat-footer {
+            height: 62px;
+            background-color: #f0f2f5;
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            z-index: 2;
+        }
+
+        .footer-icons {
+            display: flex;
+            gap: 15px;
+            color: #54656f;
+            margin-right: 15px;
+        }
+
+        .input-box {
+            flex: 1;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 9px 12px;
+            border: 1px solid #fff;
+        }
+
+        .input-box input {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .action-icon {
+            margin-left: 15px;
+            color: #54656f;
+            font-size: 20px;
+            cursor: pointer;
+            width: 25px;
+            text-align: center;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: rgba(0,0,0,0.2);
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <div class="sidebar">
+            <div class="header">
+                <img src="https://ui-avatars.com/api/?name=SS&background=0D8ABC&color=fff" class="user-img" alt="User">
+                <div class="nav-icons">
+                    <i class="fas fa-circle-notch"></i>
+                    <i class="fas fa-message"></i>
+                    <i class="fas fa-ellipsis-vertical"></i>
+                </div>
+            </div>
+
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search or start new chat">
+                </div>
+            </div>
+
+            <div class="contact-list">
+                <div class="contact active">
+                    <img src="https://ui-avatars.com/api/?name=Mohd+Suleman&background=random" class="user-img" alt="Mohd Suleman">
+                    <div class="contact-info">
+                        <div class="contact-top">
+                            <span class="contact-name">Mohd Suleman</span>
+                            <span class="contact-time">10:23 AM</span>
+                        </div>
+                        <div class="contact-msg">Are we still on for the meeting?</div>
+                    </div>
+                </div>
+                <div class="contact">
+                    <img src="https://ui-avatars.com/api/?name=Samir&background=random" class="user-img" alt="Bob">
+                    <div class="contact-info">
+                        <div class="contact-top">
+                            <span class="contact-name">Samir</span>
+                            <span class="contact-time">Yesterday</span>
+                        </div>
+                        <div class="contact-msg">Check the latest commit on GitHub.</div>
+                    </div>
+                </div>
+                <div class="contact">
+                    <img src="https://ui-avatars.com/api/?name=Arhan&background=random" class="user-img" alt="Charlie">
+                    <div class="contact-info">
+                        <div class="contact-top">
+                            <span class="contact-name">Arhan</span>
+                            <span class="contact-time">Tuesday</span>
+                        </div>
+                        <div class="contact-msg">The roadmap looks great!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-area">
+            <div class="header">
+                <div style="display: flex; align-items: center;">
+                    <img src="https://ui-avatars.com/api/?name=Mohd+Suleman&background=random" class="user-img" alt="Alice">
+                    <div class="chat-header-info">
+                        <div class="chat-header-name">Mohd Suleman</div>
+                        <div class="chat-header-status">online</div>
+                    </div>
+                </div>
+                <div class="nav-icons">
+                    <i class="fas fa-search"></i>
+                    <i class="fas fa-paperclip"></i>
+                    <i class="fas fa-ellipsis-vertical"></i>
+                </div>
+            </div>
+
+            <div class="messages-container">
+                <div class="message received">
+                    Hi! Have you seen the new UI mockups?
+                    <span class="msg-time">10:15 AM</span>
+                </div>
+                <div class="message sent">
+                    Yes, I just took a look. They look fantastic!
+                    <span class="msg-time">10:18 AM <i class="fas fa-check-double"></i></span>
+                </div>
+            </div>
+
+            <div class="chat-footer">
+                <div class="footer-icons">
+                    <i class="far fa-smile"></i>
+                    <i class="fas fa-plus"></i>
+                </div>
+                <div class="input-box">
+                    <input type="text" placeholder="Type a message">
+                </div>
+                <i class="fas fa-microphone action-icon"></i>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* --- JAVASCRIPT LOGIC --- */
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // DOM Elements
+            const chatInput = document.querySelector('.chat-footer input');
+            const chatContainer = document.querySelector('.messages-container');
+            const actionIcon = document.querySelector('.action-icon');
+            const chatHeaderName = document.querySelector('.chat-header-name');
+            const chatHeaderImg = document.querySelector('.header .user-img');
+            const contacts = document.querySelectorAll('.contact');
+
+            // 1. Icon Toggle (Mic vs Plane)
+            chatInput.addEventListener('input', () => {
+                if (chatInput.value.trim() !== "") {
+                    actionIcon.classList.remove('fa-microphone');
+                    actionIcon.classList.add('fa-paper-plane');
+                } else {
+                    actionIcon.classList.remove('fa-paper-plane');
+                    actionIcon.classList.add('fa-microphone');
+                }
+            });
+
+            // 2. Send Message
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && chatInput.value.trim() !== "") {
+                    sendMessage(chatInput.value);
+                }
+            });
+
+            actionIcon.addEventListener('click', () => {
+                if (chatInput.value.trim() !== "") {
+                    sendMessage(chatInput.value);
+                }
+            });
+
+            function sendMessage(text) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', 'sent');
+                messageDiv.innerHTML = `${text}<span class="msg-time">${getCurrentTime()} <i class="fas fa-check-double"></i></span>`;
+                
+                chatContainer.appendChild(messageDiv);
+                
+                // Clear input & reset icon
+                chatInput.value = '';
+                actionIcon.classList.remove('fa-paper-plane');
+                actionIcon.classList.add('fa-microphone');
+                
+                scrollToBottom();
+
+                // Simulate Reply
+                setTimeout(() => {
+                    receiveMessage("Okay, got it!");
+                }, 1500);
+            }
+
+            function receiveMessage(text) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', 'received');
+                messageDiv.innerHTML = `${text}<span class="msg-time">${getCurrentTime()}</span>`;
+                chatContainer.appendChild(messageDiv);
+                scrollToBottom();
+            }
+
+            // 3. Utilities
+            function scrollToBottom() {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+            function getCurrentTime() {
+                const now = new Date();
+                let hours = now.getHours();
+                let minutes = now.getMinutes();
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12 || 12;
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                return hours + ':' + minutes + ' ' + ampm;
+            }
+
+            // 4. Contact Switching
+            contacts.forEach(contact => {
+                contact.addEventListener('click', () => {
+                    contacts.forEach(c => c.classList.remove('active'));
+                    contact.classList.add('active');
+                    
+                    const name = contact.querySelector('.contact-name').innerText;
+                    const img = contact.querySelector('.user-img').src;
+                    
+                    chatHeaderName.innerText = name;
+                    chatHeaderImg.src = img;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
