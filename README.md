@@ -86,7 +86,3 @@ This project helps understand:
 ## 👨‍💻 Author
 
 **Mohd Suleman Siddiqui**
-
----
-
-Want me to make a **resume-ready project description** for this too?
